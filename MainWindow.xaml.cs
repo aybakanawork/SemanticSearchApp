@@ -51,12 +51,30 @@ namespace SemanticSearchApp
             SearchButton.IsEnabled = false;
             try
             {
-                var results = await _documentStore.SearchDocumentsAsync(query);
-                ResultsList.ItemsSource = results;
-
-                if (!results.Any())
+                var selectedMode = (SearchModeComboBox.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content?.ToString();
+                if (selectedMode == "Static")
                 {
-                    MessageBox.Show("No results found.", "Search Results", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Simple static search: title/content contains query
+                    var allDocs = _documentStore.GetType().GetField("_documents", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(_documentStore) as IEnumerable<Document>;
+                    var results = allDocs?.Where(doc =>
+                        doc.Title.Contains(query, System.StringComparison.OrdinalIgnoreCase) ||
+                        doc.Content.Contains(query, System.StringComparison.OrdinalIgnoreCase))
+                        .Select(doc => new SearchResult(doc, 1.0f))
+                        .ToList() ?? new List<SearchResult>();
+                    ResultsList.ItemsSource = results;
+                    if (!results.Any())
+                    {
+                        MessageBox.Show("No results found.", "Search Results", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                else // Semantic
+                {
+                    var results = await _documentStore.SearchDocumentsAsync(query);
+                    ResultsList.ItemsSource = results;
+                    if (!results.Any())
+                    {
+                        MessageBox.Show("No results found.", "Search Results", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
                 }
             }
             catch (Exception ex)
