@@ -10,12 +10,14 @@ namespace SemanticSearchApp
         private List<Document> _documents;
         private readonly DataLoader _dataLoader;
         private readonly EmbeddingService _embeddingService;
-        public event EventHandler<string> ProcessingStatusChanged;
+        private readonly SemanticSearch _semanticSearch;
+        public event EventHandler<string>? ProcessingStatusChanged;
 
         public DocumentStore(DataLoader dataLoader)
         {
             _dataLoader = dataLoader;
             _embeddingService = new EmbeddingService();
+            _semanticSearch = new SemanticSearch(_embeddingService);
             _documents = new List<Document>();
         }
 
@@ -57,20 +59,27 @@ namespace SemanticSearchApp
             ProcessingStatusChanged?.Invoke(this, "Ready");
         }
 
-        public List<Document> SearchDocuments(string query)
+        public async Task<List<SearchResult>> SearchDocumentsAsync(string query)
         {
-            if (string.IsNullOrWhiteSpace(query))
-                return _documents;
+            ProcessingStatusChanged?.Invoke(this, "Searching...");
 
-            // Simple text-based search
-            return _documents
-                .Where(doc => 
-                    doc.Title.Contains(query, System.StringComparison.OrdinalIgnoreCase) ||
-                    doc.Content.Contains(query, System.StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(query))
+                {
+                    return _documents.Select(d => new SearchResult(d, 1.0f)).ToList();
+                }
+
+                var results = await _semanticSearch.SearchAsync(query, _documents);
+                return results.Select(r => new SearchResult(r.Document, r.Score)).ToList();
+            }
+            finally
+            {
+                ProcessingStatusChanged?.Invoke(this, "Ready");
+            }
         }
 
-        public Document GetDocumentById(string id)
+        public Document? GetDocumentById(string id)
         {
             return _documents.FirstOrDefault(d => d.Id == id);
         }

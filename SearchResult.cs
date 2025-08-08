@@ -2,15 +2,17 @@ namespace SemanticSearchApp
 {
     public class SearchResult
     {
-        public string Title { get; set; }
-        public string Content { get; set; }
-        public double Relevance { get; set; }
+        public Document Document { get; }
+        public float Score { get; }
 
-        public SearchResult(string title, string content, double relevance = 1.0)
+        public string Title => Document.Title;
+        public string Content => Document.Content;
+        public string FilePath => Document.FilePath;
+
+        public SearchResult(Document document, float score)
         {
-            Title = title;
-            Content = content;
-            Relevance = relevance;
+            Document = document;
+            Score = score;
         }
     }
 }

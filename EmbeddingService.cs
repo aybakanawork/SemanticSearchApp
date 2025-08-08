@@ -80,7 +80,7 @@ namespace SemanticSearchApp
 
         private class OllamaEmbeddingResponse
         {
-            public float[] Embedding { get; set; }
+            public float[]? Embedding { get; set; }
         }
     }
 }

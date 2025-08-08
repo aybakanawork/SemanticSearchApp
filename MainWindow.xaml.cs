@@ -18,7 +18,7 @@ namespace SemanticSearchApp
             InitializeDocumentStoreAsync();
         }
 
-        private void DocumentStore_ProcessingStatusChanged(object sender, string status)
+        private void DocumentStore_ProcessingStatusChanged(object? sender, string status)
         {
             // Ensure UI updates happen on the UI thread
             Dispatcher.Invoke(() =>
@@ -38,7 +38,7 @@ namespace SemanticSearchApp
                 MessageBox.Show($"Error loading documents: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        private async void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             string query = SearchBox.Text.Trim();
 
@@ -48,12 +48,24 @@ namespace SemanticSearchApp
                 return;
             }
 
-            var results = _documentStore.SearchDocuments(query);
-            ResultsList.ItemsSource = results;
-
-            if (!results.Any())
+            SearchButton.IsEnabled = false;
+            try
             {
-                MessageBox.Show("No results found.", "Search Results", MessageBoxButton.OK, MessageBoxImage.Information);
+                var results = await _documentStore.SearchDocumentsAsync(query);
+                ResultsList.ItemsSource = results;
+
+                if (!results.Any())
+                {
+                    MessageBox.Show("No results found.", "Search Results", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Search error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                SearchButton.IsEnabled = true;
             }
         }
     }

@@ -29,13 +29,20 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="5">
-                            <TextBlock Text="{Binding Title}" 
-                                     FontWeight="Bold"
-                                     FontSize="14"/>
+                            <DockPanel>
+                                <TextBlock Text="{Binding Title}" 
+                                         FontWeight="Bold"
+                                         FontSize="14"/>
+                                <TextBlock Text="{Binding Score, StringFormat='{} - {0:P0}'}"
+                                         Foreground="Gray"
+                                         FontSize="12"
+                                         Margin="10,0,0,0"/>
+                            </DockPanel>
                             <TextBlock Text="{Binding Content}" 
                                      TextWrapping="Wrap"
-                                     Margin="0,5"/>
-                            <TextBlock Text="{Binding Relevance, StringFormat='Relevance: {0:P0}'}"
+                                     Margin="0,5"
+                                     MaxHeight="60"/>
+                            <TextBlock Text="{Binding FilePath}"
                                      Foreground="Gray"
                                      FontSize="11"/>
                         </StackPanel>
