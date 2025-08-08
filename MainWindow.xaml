@@ -1,0 +1,47 @@
+﻿<Window x:Class="SemanticSearchApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Semantic Search" Height="600" Width="800">
+    <Grid>
+        <DockPanel>
+            <!-- Search Section -->
+            <StackPanel DockPanel.Dock="Top" Margin="10">
+                <TextBox x:Name="SearchBox" 
+                         Height="30" 
+                         Margin="0,0,0,10"
+                         VerticalContentAlignment="Center"
+                         Padding="5,0"
+                         FontSize="14"/>
+                
+                <Button x:Name="SearchButton" 
+                        Height="30" 
+                        Content="Search"
+                        Click="SearchButton_Click"/>
+                        
+                <TextBlock x:Name="StatusText"
+                          Margin="0,5"
+                          Foreground="Gray"/>
+            </StackPanel>
+
+            <!-- Results Section -->
+            <ListView x:Name="ResultsList" 
+                      Margin="10">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="5">
+                            <TextBlock Text="{Binding Title}" 
+                                     FontWeight="Bold"
+                                     FontSize="14"/>
+                            <TextBlock Text="{Binding Content}" 
+                                     TextWrapping="Wrap"
+                                     Margin="0,5"/>
+                            <TextBlock Text="{Binding Relevance, StringFormat='Relevance: {0:P0}'}"
+                                     Foreground="Gray"
+                                     FontSize="11"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </DockPanel>
+    </Grid>
+</Window>
