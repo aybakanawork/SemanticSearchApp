@@ -25,9 +25,20 @@ namespace SemanticSearchApp
             _documents = await _dataLoader.LoadDocumentsAsync();
             
             ProcessingStatusChanged?.Invoke(this, "Checking Ollama availability...");
-            if (!await _embeddingService.IsModelAvailable())
+            try 
             {
-                throw new Exception("Embedding model is not available. Please ensure Ollama is running and the model is installed.");
+                if (!await _embeddingService.IsModelAvailable())
+                {
+                    var errorMessage = "Embedding model is not available. Please ensure:\n" +
+                                     "1. Ollama is running (check if service is started)\n" +
+                                     "2. The model 'all-minilm' is installed (run 'ollama pull all-minilm')\n" +
+                                     "3. Ollama API is accessible at http://localhost:11434";
+                    throw new Exception(errorMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error connecting to Ollama: {ex.Message}");
             }
 
             ProcessingStatusChanged?.Invoke(this, "Generating embeddings...");

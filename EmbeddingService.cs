@@ -10,7 +10,7 @@ namespace SemanticSearchApp
     public class EmbeddingService
     {
         private readonly HttpClient _httpClient;
-        private const string OLLAMA_BASE_URL = "http://localhost:11434/api";
+        private const string OLLAMA_BASE_URL = "http://localhost:11434";
         private const string MODEL_NAME = "all-minilm";
 
         public EmbeddingService()
@@ -36,7 +36,7 @@ namespace SemanticSearchApp
 
             try
             {
-                var response = await _httpClient.PostAsync("/embeddings", content);
+                var response = await _httpClient.PostAsync("/api/embeddings", content);
                 response.EnsureSuccessStatusCode();
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -55,15 +55,25 @@ namespace SemanticSearchApp
         {
             try
             {
-                var response = await _httpClient.GetAsync($"/tags");
-                response.EnsureSuccessStatusCode();
+                Console.WriteLine($"Checking Ollama model availability at {_httpClient.BaseAddress}");
+                var response = await _httpClient.GetAsync("/api/tags");
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Error response from Ollama: {errorContent}");
+                    Console.WriteLine($"Status code: {response.StatusCode}");
+                    return false;
+                }
                 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                // Check if the model is in the response
+                Console.WriteLine($"Ollama response: {jsonResponse}");
                 return jsonResponse.Contains(MODEL_NAME);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error checking model availability: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 return false;
             }
         }
