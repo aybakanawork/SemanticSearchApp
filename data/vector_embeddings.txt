@@ -1,0 +1,45 @@
+Understanding Vector Embeddings and Similarity
+
+Vector embeddings represent words, phrases, or documents as numerical vectors in a high-dimensional space. These representations capture semantic and syntactic information about the text they represent.
+
+Word Embeddings Explained:
+
+1. Word2Vec
+- Skip-gram and CBOW models
+- Continuous bag of words approach
+- Word context relationships
+- Efficient training on large corpora
+
+2. GloVe (Global Vectors)
+- Combines global matrix factorization
+- Leverages word co-occurrence statistics
+- Captures global word relationships
+- Better for rare words than Word2Vec
+
+3. FastText
+- Handles out-of-vocabulary words
+- Uses subword information
+- Builds on Word2Vec architecture
+- Better for morphologically rich languages
+
+4. Transformer-based Embeddings
+- BERT, RoBERTa, and DistilBERT
+- Context-aware representations
+- Bidirectional encoding
+- Pre-trained on large text corpora
+
+Similarity Metrics:
+
+1. Cosine Similarity
+- Measures angle between vectors
+- Range from -1 to 1
+- Most common for embeddings
+- Computationally efficient
+
+2. Euclidean Distance
+- L2 norm based distance
+- Actual spatial distance
+- Sensitive to magnitude
+- Used in clustering
+
+Embeddings are fundamental to semantic search, recommendation systems, and modern NLP applications.
